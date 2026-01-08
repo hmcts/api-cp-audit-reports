@@ -24,6 +24,8 @@ node_modules
 package.json
 package-lock.json
 
+.vscode
+
 *.log
 
 .DS_Store
