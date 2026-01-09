@@ -34,7 +34,7 @@ paths:
       summary: Search for cases by Case ID
       tags:
         - case-search
-      description: Retrieves the Case URNs associated with the provided Case IDs.
+      description: Retrieves Case URNs associated with the provided Case IDs.
       operationId: getCaseUrns
       parameters:
         - description: Case IDs (comma separated)
@@ -130,7 +130,7 @@ paths:
 
   /user/email:
     get:
-      summary: Search for users by Email address
+      summary: Search for Users by Email address
       tags:
         - user-search
       description: Retrieves User details associated with the provided email addresses.
@@ -150,7 +150,7 @@ paths:
             type: string
       responses:
         '200':
-          description: User search results
+          description: User email search results
           content:
             application/json:
               schema:
@@ -172,7 +172,7 @@ paths:
       summary: Search for Users by User ID
       tags:
         - user-search
-      description: Retrieves the User details associated with the provided User IDs.
+      description: Retrieves User details associated with the provided User IDs.
       operationId: getUserEmails
       parameters:
         - description: User IDs of the users (comma separated)
@@ -183,7 +183,7 @@ paths:
             type: string
       responses:
         '200':
-          description: User search results
+          description: User ID search results
           content:
             application/json:
               schema:
