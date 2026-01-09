@@ -28,6 +28,7 @@ paths:
               schema:
                 type: string
                 example: Hello
+
   /case/id:
     get:
       summary: Search for cases by Case ID
@@ -53,7 +54,7 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/CaseResult'
+                      $ref: '#/components/schemas/CaseSearchResult'
         '400':
           description: Client error
           content:
@@ -61,13 +62,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-
   /case/urn:
     get:
       summary: Search for Cases by Case URN
       tags:
         - case-search
-      description: Retrieves the Case IDs associated with the provided Case URNs.
+      description: Retrieves Case IDs associated with the provided Case URNs.
       operationId: getCaseIds
       parameters:
         - description: Case URNs (comma separated)
@@ -87,7 +87,7 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/CaseResult'
+                      $ref: '#/components/schemas/CaseSearchResult'
         '400':
           description: Client error
           content:
@@ -97,10 +97,10 @@ paths:
 
   /material/id:
     get:
-      summary: Get Case IDs for Material IDs
+      summary: Search for Material details (including Case ID)
       tags:
-        - material-mapping
-      description: Retrieves Case IDs associated with the provided material IDs.
+        - material-search
+      description: Retrieves Material details associated with the provided material IDs.
       operationId: getCaseIdsForMaterialIds
       parameters:
         - description: Material IDs (comma separated)
@@ -111,13 +111,18 @@ paths:
             type: string
       responses:
         '200':
-          description: Material cases found
+          description: Material search results
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MaterialCase'
-        '404':
-          description: No material cases found
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MaterialSearchResult'
+        '400':
+          description: Client error
           content:
             application/json:
               schema:
@@ -125,10 +130,10 @@ paths:
 
   /user/email:
     get:
-      summary: Get User IDs by Email addreses
+      summary: Search for users by Email address
       tags:
-        - user-mapping
-      description: Retrieves User IDs associated with the provided email addresses.
+        - user-search
+      description: Retrieves User details associated with the provided email addresses.
       operationId: getUserIds
       parameters:
         - description: Email addresses of the users (comma separated)
@@ -145,13 +150,18 @@ paths:
             type: string
       responses:
         '200':
-          description: Users found
+          description: User search results
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          description: No users found
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserSearchResult'
+        '400':
+          description: Client error
           content:
             application/json:
               schema:
@@ -159,10 +169,10 @@ paths:
 
   /user/id:
     get:
-      summary: Get User Emails by User IDs
+      summary: Search for Users by User ID
       tags:
-        - user-mapping
-      description: Retrieves the user emails associated with the provided User IDs.
+        - user-search
+      description: Retrieves the User details associated with the provided User IDs.
       operationId: getUserEmails
       parameters:
         - description: User IDs of the users (comma separated)
@@ -173,13 +183,18 @@ paths:
             type: string
       responses:
         '200':
-          description: Users found
+          description: User search results
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          description: No users found
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserSearchResult'
+        '400':
+          description: Client error
           content:
             application/json:
               schema:
@@ -188,7 +203,7 @@ paths:
 
 components:
   schemas:
-    CaseResult:
+    CaseSearchResult:
       type: object
       properties:
         caseId:
@@ -203,28 +218,44 @@ components:
           type: string
           description: Mapping target type (from System ID Mapper)
           example: "[example needed]"
-    MaterialCase:
+    MaterialSearchResult:
       type: object
       properties:
         caseId:
           type: string
+          description: Case ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         caseUrn:
           type: string
+          description: Case URN
+          example: "[example needed]"
         courtDocumentId:
           type: string
+          description: Court Document ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         materialId:
           type: string
-    User:
+          description: Material ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
+    UserSearchResult:
       type: object
       properties:
         email:
           type: string
+          description: User email
+          example: "test@test.hmcts.net"
         firstName:
           type: string
+          description: First name
+          example: "Test"
         lastName:
           type: string
+          description: Last name
+          example: "User"
         userId:
           type: string
+          description: User ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
 
     ErrorResponse:
       type: object
