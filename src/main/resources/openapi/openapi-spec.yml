@@ -203,12 +203,10 @@ components:
       properties:
         caseId:
           type: string
-          nullable: true
           description: Case ID
           example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         caseUrn:
           type: string
-          nullable: true
           description: Case URN
           example: "[example needed]"
         targetType:
@@ -225,7 +223,6 @@ components:
           example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         caseId:
           type: string
-          nullable: true
           description: Case ID
           example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         caseUrn:
@@ -243,14 +240,12 @@ components:
       properties:
         email:
           type: string
-          nullable: true
           description: User email
           example: "test@test.hmcts.net"
         userId:
-            type: string
-            nullable: true
-            description: User ID
-            example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
+          type: string
+          description: User ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         firstName:
           type: string
           description: First name
