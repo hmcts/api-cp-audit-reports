@@ -241,7 +241,7 @@ components:
         email:
           type: string
           description: User email
-          example: "test@test.hmcts.net"
+          example: "test@test.net"
         userId:
           type: string
           description: User ID
