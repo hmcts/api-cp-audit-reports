@@ -30,10 +30,10 @@ paths:
                 example: Hello
   /case/id:
     get:
-      summary: Get Case URN by Case ID
+      summary: Search for cases by Case ID
       tags:
-        - case-mapping
-      description: Retrieves the Case URNs associated with the provided Case ID(s).
+        - case-search
+      description: Retrieves the Case URNs associated with the provided Case IDs.
       operationId: getCaseUrns
       parameters:
         - description: Case IDs (comma separated)
@@ -44,13 +44,18 @@ paths:
             type: string
       responses:
         '200':
-          description: Case URN(s) found
+          description: Case ID search results
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CaseIdMapper'
-        '404':
-          description: Case URN(s) not found for the given ID(s)
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CaseResult'
+        '400':
+          description: Client error
           content:
             application/json:
               schema:
@@ -59,10 +64,10 @@ paths:
 
   /case/urn:
     get:
-      summary: Get Case ID by Case URN
+      summary: Search for Cases by Case URN
       tags:
-        - case-mapping
-      description: Retrieves the Case IDs associated with the provided Case URN(s).
+        - case-search
+      description: Retrieves the Case IDs associated with the provided Case URNs.
       operationId: getCaseIds
       parameters:
         - description: Case URNs (comma separated)
@@ -73,13 +78,18 @@ paths:
             type: string
       responses:
         '200':
-          description: Case ID(s) found
+          description: Case URN search results
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CaseIdMapper'
-        '404':
-          description: Case ID(s) not found for the given URN(s)
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CaseResult'
+        '400':
+          description: Client error
           content:
             application/json:
               schema:
@@ -178,15 +188,21 @@ paths:
 
 components:
   schemas:
-    CaseIdMapper:
+    CaseResult:
       type: object
       properties:
         caseId:
           type: string
+          description: Case ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         caseUrn:
           type: string
+          description: Case URN
+          example: "[example needed]"
         targetType:
           type: string
+          description: Mapping target type (from System ID Mapper)
+          example: "[example needed]"
     MaterialCase:
       type: object
       properties:
