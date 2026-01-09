@@ -45,7 +45,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Case ID search results
+          description: Case ID search results. If Case doesn't exist caseURN will be null.
           content:
             application/json:
               schema:
@@ -78,7 +78,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Case URN search results
+          description: Case URN search results. If Case doesn't exist caseID will be null.
           content:
             application/json:
               schema:
@@ -111,7 +111,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Material search results
+          description: Material search results. If Material doesn't exist caseID will be null.
           content:
             application/json:
               schema:
@@ -142,15 +142,9 @@ paths:
           required: true
           schema:
             type: string
-        - description: Correlation ID for tracking the request
-          in: header
-          name: CPPCLIENTCORRELATIONID
-          required: true
-          schema:
-            type: string
       responses:
         '200':
-          description: User email search results
+          description: User email search results. If User doesn't exist userID will be null.
           content:
             application/json:
               schema:
@@ -183,7 +177,7 @@ paths:
             type: string
       responses:
         '200':
-          description: User ID search results
+          description: User ID search results. If User doesn't exist email, firstName and lastName will be null.
           content:
             application/json:
               schema:
@@ -205,13 +199,16 @@ components:
   schemas:
     CaseSearchResult:
       type: object
+      required: [ caseId, caseUrn]
       properties:
         caseId:
           type: string
+          nullable: true
           description: Case ID
           example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         caseUrn:
           type: string
+          nullable: true
           description: Case URN
           example: "[example needed]"
         targetType:
@@ -220,9 +217,15 @@ components:
           example: "[example needed]"
     MaterialSearchResult:
       type: object
+      required: [ materialId, caseId ]
       properties:
+        materialId:
+          type: string
+          description: Material ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         caseId:
           type: string
+          nullable: true
           description: Case ID
           example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         caseUrn:
@@ -233,17 +236,21 @@ components:
           type: string
           description: Court Document ID
           example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
-        materialId:
-          type: string
-          description: Material ID
-          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
+
     UserSearchResult:
       type: object
+      required: [ email, userId ]
       properties:
         email:
           type: string
+          nullable: true
           description: User email
           example: "test@test.hmcts.net"
+        userId:
+            type: string
+            nullable: true
+            description: User ID
+            example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         firstName:
           type: string
           description: First name
@@ -252,10 +259,7 @@ components:
           type: string
           description: Last name
           example: "User"
-        userId:
-          type: string
-          description: User ID
-          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
+
 
     ErrorResponse:
       type: object
