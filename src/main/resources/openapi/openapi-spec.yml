@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 servers:
   - description: APIHub Audit Reports API
     url: https://virtserver.swaggerhub.com/HMCTS-DTS/api-cp-audit-reports/0.0.0
@@ -28,12 +28,13 @@ paths:
               schema:
                 type: string
                 example: Hello
+
   /case/id:
     get:
-      summary: Get Case URN by Case ID
+      summary: Search for cases by Case ID
       tags:
-        - case-mapping
-      description: Retrieves the Case URNs associated with the provided Case ID(s).
+        - case-search
+      description: Retrieves Case URNs associated with the provided Case IDs.
       operationId: getCaseUrns
       parameters:
         - description: Case IDs (comma separated)
@@ -44,25 +45,29 @@ paths:
             type: string
       responses:
         '200':
-          description: Case URN(s) found
+          description: Case ID search results. If Case doesn't exist caseURN will be null.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CaseIdMapper'
-        '404':
-          description: Case URN(s) not found for the given ID(s)
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CaseSearchResult'
+        '400':
+          description: Client error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-
   /case/urn:
     get:
-      summary: Get Case ID by Case URN
+      summary: Search for Cases by Case URN
       tags:
-        - case-mapping
-      description: Retrieves the Case IDs associated with the provided Case URN(s).
+        - case-search
+      description: Retrieves Case IDs associated with the provided Case URNs.
       operationId: getCaseIds
       parameters:
         - description: Case URNs (comma separated)
@@ -73,13 +78,18 @@ paths:
             type: string
       responses:
         '200':
-          description: Case ID(s) found
+          description: Case URN search results. If Case doesn't exist caseID will be null.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CaseIdMapper'
-        '404':
-          description: Case ID(s) not found for the given URN(s)
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CaseSearchResult'
+        '400':
+          description: Client error
           content:
             application/json:
               schema:
@@ -87,10 +97,10 @@ paths:
 
   /material/id:
     get:
-      summary: Get Case IDs for Material IDs
+      summary: Search for Material details (including Case ID)
       tags:
-        - material-mapping
-      description: Retrieves Case IDs associated with the provided material IDs.
+        - material-search
+      description: Retrieves Material details associated with the provided material IDs.
       operationId: getCaseIdsForMaterialIds
       parameters:
         - description: Material IDs (comma separated)
@@ -101,13 +111,18 @@ paths:
             type: string
       responses:
         '200':
-          description: Material cases found
+          description: Material search results. If Material doesn't exist caseID will be null.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MaterialCase'
-        '404':
-          description: No material cases found
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MaterialSearchResult'
+        '400':
+          description: Client error
           content:
             application/json:
               schema:
@@ -115,10 +130,10 @@ paths:
 
   /user/email:
     get:
-      summary: Get User IDs by Email addreses
+      summary: Search for Users by Email address
       tags:
-        - user-mapping
-      description: Retrieves User IDs associated with the provided email addresses.
+        - user-search
+      description: Retrieves User details associated with the provided email addresses.
       operationId: getUserIds
       parameters:
         - description: Email addresses of the users (comma separated)
@@ -127,21 +142,20 @@ paths:
           required: true
           schema:
             type: string
-        - description: Correlation ID for tracking the request
-          in: header
-          name: CPPCLIENTCORRELATIONID
-          required: true
-          schema:
-            type: string
       responses:
         '200':
-          description: Users found
+          description: User email search results. If User doesn't exist userID will be null.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          description: No users found
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserSearchResult'
+        '400':
+          description: Client error
           content:
             application/json:
               schema:
@@ -149,10 +163,10 @@ paths:
 
   /user/id:
     get:
-      summary: Get User Emails by User IDs
+      summary: Search for Users by User ID
       tags:
-        - user-mapping
-      description: Retrieves the user emails associated with the provided User IDs.
+        - user-search
+      description: Retrieves User details associated with the provided User IDs.
       operationId: getUserEmails
       parameters:
         - description: User IDs of the users (comma separated)
@@ -163,13 +177,18 @@ paths:
             type: string
       responses:
         '200':
-          description: Users found
+          description: User ID search results. If User doesn't exist email, firstName and lastName will be null.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          description: No users found
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserSearchResult'
+        '400':
+          description: Client error
           content:
             application/json:
               schema:
@@ -178,37 +197,64 @@ paths:
 
 components:
   schemas:
-    CaseIdMapper:
+    CaseSearchResult:
       type: object
+      required: [ caseId, caseUrn]
       properties:
         caseId:
           type: string
+          description: Case ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
         caseUrn:
           type: string
+          description: Case URN
+          example: "[example needed]"
         targetType:
           type: string
-    MaterialCase:
+          description: Mapping target type (from System ID Mapper)
+          example: "[example needed]"
+    MaterialSearchResult:
       type: object
+      required: [ materialId, caseId ]
       properties:
-        caseId:
-          type: string
-        caseUrn:
-          type: string
-        courtDocumentId:
-          type: string
         materialId:
           type: string
-    User:
+          description: Material ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
+        caseId:
+          type: string
+          description: Case ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
+        caseUrn:
+          type: string
+          description: Case URN
+          example: "[example needed]"
+        courtDocumentId:
+          type: string
+          description: Court Document ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
+
+    UserSearchResult:
       type: object
+      required: [ email, userId ]
       properties:
         email:
           type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
+          description: User email
+          example: "test@test.net"
         userId:
           type: string
+          description: User ID
+          example: "48ede83c-2a7e-4d2a-b2e8-fb9b4ed7011c"
+        firstName:
+          type: string
+          description: First name
+          example: "Test"
+        lastName:
+          type: string
+          description: Last name
+          example: "User"
+
 
     ErrorResponse:
       type: object
