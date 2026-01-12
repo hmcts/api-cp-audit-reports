@@ -194,12 +194,53 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /reports:
+    post:
+      summary: Submit a request for an audit report
+      tags:
+        - audit-reports
+      description: Submits a request for an audit report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditReportRequest'
+
+      responses:
+        '202':
+          description: Audit report request accepted and queued.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId:
+                    type: string
+                    description: The data backend job ID for internal tracking
+                    example: "b14cb7e7-d346-4751-9cfd-8c2767d53111"
+                  auditReportReference:
+                    type: string
+                    description: The user friendly reference for the report request
+                    example: "20251220-ewo4dl"
+        '400':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
     CaseSearchResult:
       type: object
-      required: [ caseId, caseUrn]
+      required: [ caseId, caseUrn ]
       properties:
         caseId:
           type: string
@@ -213,6 +254,7 @@ components:
           type: string
           description: Mapping target type (from System ID Mapper)
           example: "[example needed]"
+
     MaterialSearchResult:
       type: object
       required: [ materialId, caseId ]
@@ -255,10 +297,46 @@ components:
           description: Last name
           example: "User"
 
+    AuditReportRequest:
+      type: object
+      required: [ startDate, endDate, allUsers, searchCriteria ]
+      properties:
+        startDate:
+          description: Start date of report
+          type: string
+          format: date
+        endDate:
+          description: End date of report
+          type: string
+          format: date
+        allUsers:
+          description: Boolean indicating if report is for all users or an individual
+          type: boolean
+        userEmail:
+          description: Email address of user to run the report on
+          type: string
+          format: email
+        searchCriteria:
+          description: The search criteria the user has chosen
+          type: string
+          enum:
+            - case
+            - material
+            - hearing
+            - all-activity
+        caseUrn:
+          description: The case URN to run the report on
+          type: string
+        materialIds:
+          description: The material IDs to run the report on
+          type: string
+        hearingId:
+          description: The hearing ID to run the report on
+          type: string
 
     ErrorResponse:
       type: object
-      required: [error, message, timestamp, traceId]
+      required: [ error, message, timestamp, traceId ]
       properties:
         error:
           type: string
