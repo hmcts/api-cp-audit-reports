@@ -217,11 +217,11 @@ paths:
                 properties:
                   jobId:
                     type: string
-                    description: The data backend job ID for internal tracking
+                    description: Data backend job ID for internal tracking
                     example: "b14cb7e7-d346-4751-9cfd-8c2767d53111"
                   auditReportReference:
                     type: string
-                    description: The user friendly reference for the report request
+                    description: User friendly reference for the report request
                     example: "20251220-ewo4dl"
         '400':
           description: Client error
@@ -341,7 +341,7 @@ components:
           type: string
           format: email
         searchCriteria:
-          description: The search criteria the user has chosen
+          description: Search criteria the user has chosen
           type: string
           enum:
             - case
@@ -349,13 +349,13 @@ components:
             - hearing
             - all-activity
         caseUrn:
-          description: The case URN to run the report on
+          description: Case URN to run the report on
           type: string
         materialIds:
-          description: The material IDs to run the report on
+          description: Material IDs to run the report on
           type: string
         hearingId:
-          description: The hearing ID to run the report on
+          description: Hearing ID to run the report on
           type: string
           
     AuditReportListingItem:
@@ -394,7 +394,7 @@ components:
           description: User ID of user to run the report on	string
         searchCriteria:
           type: string
-          description: The search criteria the user has chosen
+          description: Search criteria the user has chosen
           enum:
             - case
             - material
@@ -402,22 +402,22 @@ components:
             - all-activity
         caseUrn:
           type: string
-          description: The case URN to run the report on
+          description: Case URN to run the report on
         caseID:
           type: string
           format: uuid
-          description: The case ID to run the report on	string
+          description: Case ID to run the report on	string
         materialIds:
           type: string
           format: date
-          description: The material IDs to run the report on
+          description: Material IDs to run the report on
         hearingId:
           type: string
           format: uuid
-          description: The hearing ID to run the report on
+          description: Hearing ID to run the report on
         pipelineStatus:
           type: string
-          description: The status of the pipeline run
+          description: Status of the pipeline run
           enum:
             - PENDING
             - COMPLETE
@@ -425,11 +425,11 @@ components:
         pipelineStartTime:
           type: string
           format: date-time
-          description: The start time the pipeline entered the PENDING status
+          description: Start time the pipeline entered the PENDING status
         pipelineEndTime:
           type: string
           format: date-time
-          description: The end time the pipeline entered the COMPLETE or FAILED status
+          description: End time the pipeline entered the COMPLETE or FAILED status
         pipelineStatusDescription:
           type: string
           description: A description of the status, used to record errors for FAILED status
