@@ -236,6 +236,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+    get:
+      summary: Get a list of audit reports
+      tags:
+        - audit-reports
+      description: Retrieves a list of audit reports.
+      responses:
+        '200':
+          description: List of audit reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reports:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditReportListingItem'
+        '400':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   schemas:
     CaseSearchResult:
@@ -333,6 +357,82 @@ components:
         hearingId:
           description: The hearing ID to run the report on
           type: string
+          
+    AuditReportListingItem:
+      type: object
+      properties:
+        auditUserId:
+          type: string
+          format: uuid
+          description: User ID of user requesting audit report
+        auditUserEmail:
+          type: string
+          format: email
+          description: Email of user requesting audit report
+        auditReportReference:
+          type: string
+          description: Reference for audit report
+          example: "20251220-ewo4dl"
+        startDate:
+          type: string
+          format: date
+          description: Start date of report	string
+        endDate:
+          type: string
+          format: date
+          description: End date of report
+        allUsers:
+          type: boolean
+          description: Boolean indicating if report is for all users or an individual
+        userEmail:
+          type: string
+          format: email
+          description: Email address of user to run the report on
+        userId:
+          type: string
+          format: uuid
+          description: User ID of user to run the report on	string
+        searchCriteria:
+          type: string
+          description: The search criteria the user has chosen
+          enum:
+            - case
+            - material
+            - hearing
+            - all-activity
+        caseUrn:
+          type: string
+          description: The case URN to run the report on
+        caseID:
+          type: string
+          format: uuid
+          description: The case ID to run the report on	string
+        materialIds:
+          type: string
+          format: date
+          description: The material IDs to run the report on
+        hearingId:
+          type: string
+          format: uuid
+          description: The hearing ID to run the report on
+        pipelineStatus:
+          type: string
+          description: The status of the pipeline run
+          enum:
+            - PENDING
+            - COMPLETE
+            - FAILED
+        pipelineStartTime:
+          type: string
+          format: date-time
+          description: The start time the pipeline entered the PENDING status
+        pipelineEndTime:
+          type: string
+          format: date-time
+          description: The end time the pipeline entered the COMPLETE or FAILED status
+        pipelineStatusDescription:
+          type: string
+          description: A description of the status, used to record errors for FAILED status
 
     ErrorResponse:
       type: object
