@@ -215,7 +215,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  jobId:
+                  pipelineJobId:
                     type: string
                     description: Data backend job ID for internal tracking
                     example: "b14cb7e7-d346-4751-9cfd-8c2767d53111"
