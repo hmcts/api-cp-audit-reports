@@ -415,6 +415,10 @@ components:
           type: string
           format: uuid
           description: Hearing ID to run the report on
+        pipelineJobId:
+            type: string
+            format: uuid
+            description: The Job ID of the Fabric pipeline
         pipelineStatus:
           type: string
           description: Status of the pipeline run
