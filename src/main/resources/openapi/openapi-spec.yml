@@ -273,11 +273,10 @@ components:
         caseUrn:
           type: string
           description: Case URN
-          example: "[example needed]"
+          example: "AC-2025-ABC-123456"
         targetType:
           type: string
           description: Mapping target type (from System ID Mapper)
-          example: "[example needed]"
 
     MaterialSearchResult:
       type: object
@@ -294,7 +293,7 @@ components:
         caseUrn:
           type: string
           description: Case URN
-          example: "[example needed]"
+          example: "AC-2025-ABC-123456"
         courtDocumentId:
           type: string
           description: Court Document ID
