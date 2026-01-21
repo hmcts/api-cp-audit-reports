@@ -13,6 +13,13 @@ info:
     name: MIT
     url: 'https://opensource.org/licenses/MIT'
 
+tags:
+  - name: root
+  - name: case-search
+  - name: material-search
+  - name: user-search
+  - name: audit-reports
+
 paths:
   /:
     get:
@@ -194,12 +201,79 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /reports:
+    post:
+      summary: Submit a request for an audit report
+      tags:
+        - audit-reports
+      description: Submits a request for an audit report
+      operationId: postReportRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditReportRequest'
+
+      responses:
+        '202':
+          description: Audit report request accepted and queued.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pipelineJobId:
+                    type: string
+                    description: Data backend job ID for internal tracking
+                    example: "b14cb7e7-d346-4751-9cfd-8c2767d53111"
+                  auditReportReference:
+                    type: string
+                    description: User friendly reference for the report request
+                    example: "20251220-ewo4dl"
+        '400':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      summary: Get a list of audit reports
+      tags:
+        - audit-reports
+      description: Retrieves a list of audit reports.
+      operationId: getReportListing
+      responses:
+        '200':
+          description: List of audit reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reports:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditReportListingItem'
+        '400':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
     CaseSearchResult:
       type: object
-      required: [ caseId, caseUrn]
+      required: [ caseId, caseUrn ]
       properties:
         caseId:
           type: string
@@ -208,11 +282,11 @@ components:
         caseUrn:
           type: string
           description: Case URN
-          example: "[example needed]"
+          example: "AC-2025-ABC-123456"
         targetType:
           type: string
           description: Mapping target type (from System ID Mapper)
-          example: "[example needed]"
+
     MaterialSearchResult:
       type: object
       required: [ materialId, caseId ]
@@ -228,7 +302,7 @@ components:
         caseUrn:
           type: string
           description: Case URN
-          example: "[example needed]"
+          example: "AC-2025-ABC-123456"
         courtDocumentId:
           type: string
           description: Court Document ID
@@ -255,10 +329,126 @@ components:
           description: Last name
           example: "User"
 
+    AuditReportRequest:
+      type: object
+      required: [ startDate, endDate, allUsers, searchCriteria ]
+      properties:
+        startDate:
+          description: Start date of report
+          type: string
+          format: date
+        endDate:
+          description: End date of report
+          type: string
+          format: date
+        allUsers:
+          description: Boolean indicating if report is for all users or an individual
+          type: boolean
+        userEmail:
+          description: Email address of user to run the report on
+          type: string
+          format: email
+        searchCriteria:
+          description: Search criteria the user has chosen
+          type: string
+          enum:
+            - case
+            - material
+            - hearing
+            - all-activity
+        caseUrn:
+          description: Case URN to run the report on
+          type: string
+        materialIds:
+          description: Material IDs to run the report on
+          type: string
+        hearingId:
+          description: Hearing ID to run the report on
+          type: string
+          
+    AuditReportListingItem:
+      type: object
+      properties:
+        auditUserId:
+          type: string
+          format: uuid
+          description: User ID of user requesting audit report
+        auditUserEmail:
+          type: string
+          format: email
+          description: Email of user requesting audit report
+        auditReportReference:
+          type: string
+          description: Reference for audit report
+          example: "20251220-ewo4dl"
+        startDate:
+          type: string
+          format: date
+          description: Start date of report	string
+        endDate:
+          type: string
+          format: date
+          description: End date of report
+        allUsers:
+          type: boolean
+          description: Boolean indicating if report is for all users or an individual
+        userEmail:
+          type: string
+          format: email
+          description: Email address of user to run the report on
+        userId:
+          type: string
+          format: uuid
+          description: User ID of user to run the report on	string
+        searchCriteria:
+          type: string
+          description: Search criteria the user has chosen
+          enum:
+            - case
+            - material
+            - hearing
+            - all-activity
+        caseUrn:
+          type: string
+          description: Case URN to run the report on
+        caseID:
+          type: string
+          format: uuid
+          description: Case ID to run the report on	string
+        materialIds:
+          type: string
+          format: date
+          description: Material IDs to run the report on
+        hearingId:
+          type: string
+          format: uuid
+          description: Hearing ID to run the report on
+        pipelineJobId:
+            type: string
+            format: uuid
+            description: The Job ID of the Fabric pipeline
+        pipelineStatus:
+          type: string
+          description: Status of the pipeline run
+          enum:
+            - PENDING
+            - COMPLETE
+            - FAILED
+        pipelineStartTime:
+          type: string
+          format: date-time
+          description: Start time the pipeline entered the PENDING status
+        pipelineEndTime:
+          type: string
+          format: date-time
+          description: End time the pipeline entered the COMPLETE or FAILED status
+        pipelineStatusDescription:
+          type: string
+          description: A description of the status, used to record errors for FAILED status
 
     ErrorResponse:
       type: object
-      required: [error, message, timestamp, traceId]
+      required: [ error, message, timestamp, traceId ]
       properties:
         error:
           type: string
