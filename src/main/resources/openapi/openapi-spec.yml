@@ -13,6 +13,13 @@ info:
     name: MIT
     url: 'https://opensource.org/licenses/MIT'
 
+tags:
+  - name: root
+  - name: case-search
+  - name: material-search
+  - name: user-search
+  - name: audit-reports
+
 paths:
   /:
     get:
@@ -200,6 +207,7 @@ paths:
       tags:
         - audit-reports
       description: Submits a request for an audit report
+      operationId: postReportRequest
       requestBody:
         required: true
         content:
@@ -241,6 +249,7 @@ paths:
       tags:
         - audit-reports
       description: Retrieves a list of audit reports.
+      operationId: getReportListing
       responses:
         '200':
           description: List of audit reports
