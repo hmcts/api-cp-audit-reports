@@ -381,6 +381,10 @@ components:
           type: string
           description: Reference for audit report
           example: "20251220-ewo4dl"
+        downloadUrl:
+          type: string
+          format: uri
+          description: The download URL of the generated audit report
         startDate:
           type: string
           format: date
@@ -417,7 +421,6 @@ components:
           description: Case ID to run the report on	string
         materialIds:
           type: string
-          format: date
           description: Material IDs to run the report on
         hearingId:
           type: string
