@@ -417,7 +417,6 @@ components:
           description: Case ID to run the report on	string
         materialIds:
           type: string
-          format: date
           description: Material IDs to run the report on
         hearingId:
           type: string
