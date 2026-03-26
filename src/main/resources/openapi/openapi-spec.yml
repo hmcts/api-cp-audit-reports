@@ -85,7 +85,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Case URN search results. If Case doesn't exist caseID will be null.
+          description: Case URN search results. If Case doesn't exist caseId will be null.
           content:
             application/json:
               schema:
@@ -118,7 +118,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Material search results. If Material doesn't exist caseID will be null.
+          description: Material search results. If Material doesn't exist caseId will be null.
           content:
             application/json:
               schema:
@@ -415,7 +415,7 @@ components:
         caseUrn:
           type: string
           description: Case URN to run the report on
-        caseID:
+        caseId:
           type: string
           format: uuid
           description: Case ID to run the report on	string
