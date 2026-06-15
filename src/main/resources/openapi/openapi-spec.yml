@@ -1,7 +1,11 @@
 openapi: 3.0.0
 servers:
-  - description: APIHub Audit Reports API
-    url: https://virtserver.swaggerhub.com/HMCTS-DTS/api-cp-audit-reports/0.0.0
+  - description: Audit Reports API
+    url: https://api-cp-audit-reports.net/{version}
+    variables:
+      version:
+        default: "0.0.0"
+        description: API version; matches the spec info.version
 
 info:
   title: Audit Reports API
