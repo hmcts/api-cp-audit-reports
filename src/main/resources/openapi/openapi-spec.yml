@@ -23,6 +23,7 @@ tags:
   - name: material-search
   - name: user-search
   - name: audit-reports
+  - name: referencedata-search
 
 paths:
   /:
@@ -273,6 +274,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /referralreason/id:
+    get:
+      summary: Search for Referral reasons
+      tags:
+        - referencedata-search
+      description: Retrieves referral reason details associated with the provided IDs.
+      operationId: getReferralReasons
+      parameters:
+        - description: Referral reason IDs (comma separated)
+          in: query
+          name: referralReasonIds
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Referral ID search results.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReferenceDataSearchResult'
+        '400':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   schemas:
     CaseSearchResult:
@@ -332,6 +366,35 @@ components:
           type: string
           description: Last name
           example: "User"
+
+    ReferenceDataSearchResult:
+      type: object
+      required: [ referralReasonId ]
+      properties:
+        id:
+          type: string
+          description: Id
+          example: "12345sjk"
+        seqId:
+          type: string
+          description: seqId
+          example: "sequenceId"
+        hearingCode:
+          type: string
+          description: Hearing code
+          example: "Test hearing code"
+        reason:
+          type: string
+          description: Reason
+          example: "Reason"
+        reasonCode:
+          type: string
+          description: Reason code
+          example: "Reason code"
+        welshReason:
+          type: string
+          description: Welsh reason
+          example: "Welsh reason"
 
     AuditReportRequest:
       type: object
