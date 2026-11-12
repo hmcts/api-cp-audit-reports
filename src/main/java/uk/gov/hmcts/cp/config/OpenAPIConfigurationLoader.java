@@ -28,11 +28,17 @@ public class OpenAPIConfigurationLoader {
                 LOG.error("OpenAPI specification file path is required but was null or blank");
                 throw new IllegalArgumentException("Missing resource: " + path);
             }
-            final String yaml = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            return new OpenAPIV3Parser().readContents(yaml, null, null).getOpenAPI();
+            return parseOpenApi(inputStream);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private static OpenAPI parseOpenApi(final InputStream inputStream) throws IOException {
+        final String yaml;
+
+        yaml = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        return new OpenAPIV3Parser().readContents(yaml, null, null).getOpenAPI();
     }
 
     public final OpenAPI openAPI() {
