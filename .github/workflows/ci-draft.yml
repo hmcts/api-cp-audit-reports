@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - main
+      - 'team/**'
   push:
     branches:
       - master
@@ -17,7 +18,7 @@ jobs:
   Artefact-Version:
     runs-on: ubuntu-latest
     outputs:
-      artefact_version: ${{ steps.artefact.outputs.draft_version }}
+      artefact_version: ${{ github.event_name == 'pull_request' && format('{0}-pr{1}.{2}.{3}', steps.artefact.outputs.draft_version, github.event.number, github.run_id, github.run_attempt) || steps.artefact.outputs.draft_version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -91,7 +92,14 @@ jobs:
 
   Publish:
     name: Publish Artefact - Java ${{ matrix.java }}
-    if: github.event_name == 'push'
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' &&
+       startsWith(github.base_ref, 'team/') &&
+       github.event.pull_request.head.repo.full_name == github.repository)
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
     needs: [ Artefact-Version, Update-Spec-Version, Test ]
     strategy:
@@ -133,3 +141,10 @@ jobs:
             -DGITHUB_TOKEN=$GITHUB_TOKEN \
             -DAZURE_DEVOPS_ARTIFACT_USERNAME=$AZURE_DEVOPS_ARTIFACT_USERNAME \
             -DAZURE_DEVOPS_ARTIFACT_TOKEN=$AZURE_DEVOPS_ARTIFACT_TOKEN
+
+      - name: Published artifact coordinates
+        env:
+          ARTEFACT_VERSION: ${{ needs.Artefact-Version.outputs.artefact_version }}
+        run: |
+          printf 'Published Maven artifact: `uk.gov.hmcts.cp:api-cp-audit-reports:%s`\n\n' "$ARTEFACT_VERSION" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Repositories: Azure Artifacts (hmcts-lib) and GitHub Packages.\n' >> "$GITHUB_STEP_SUMMARY"
