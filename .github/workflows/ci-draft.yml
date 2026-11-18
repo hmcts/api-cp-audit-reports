@@ -5,10 +5,12 @@ on:
     branches:
       - master
       - main
+      - 'team/**'
   push:
     branches:
       - master
       - main
+      - 'team/**'
 
 env:
   FILE_PATH_OPENAPI: "src/main/resources/openapi"
@@ -17,7 +19,7 @@ jobs:
   Artefact-Version:
     runs-on: ubuntu-latest
     outputs:
-      artefact_version: ${{ steps.artefact.outputs.draft_version }}
+      artefact_version: ${{ github.event_name == 'pull_request' && format('{0}-pr{1}.{2}.{3}', steps.artefact.outputs.draft_version, github.event.number, github.run_id, github.run_attempt) || format('{0}-ci{1}.{2}', steps.artefact.outputs.draft_version, github.run_id, github.run_attempt) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -91,7 +93,14 @@ jobs:
 
   Publish:
     name: Publish Artefact - Java ${{ matrix.java }}
-    if: github.event_name == 'push'
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' &&
+       startsWith(github.base_ref, 'team/') &&
+       github.event.pull_request.head.repo.full_name == github.repository)
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
     needs: [ Artefact-Version, Update-Spec-Version, Test ]
     strategy:
@@ -125,11 +134,17 @@ jobs:
           AZURE_DEVOPS_ARTIFACT_TOKEN: ${{ secrets.AZURE_DEVOPS_ARTIFACT_TOKEN }}
           JAVA_VERSION: ${{ matrix.java }}
         run: |
+          : "${AZURE_DEVOPS_ARTIFACT_USERNAME:?Missing Azure Artifacts publishing username}"
+          : "${AZURE_DEVOPS_ARTIFACT_TOKEN:?Missing Azure Artifacts publishing token}"
           echo "Publishing artefact for ARTEFACT_VERSION=$ARTEFACT_VERSION using Java $JAVA_VERSION"
           gradle build -x test publish \
             -DAPI_SPEC_VERSION=$ARTEFACT_VERSION \
             -DGITHUB_REPOSITORY=${{ github.repository }} \
-            -DGITHUB_ACTOR=${{ github.actor }} \
-            -DGITHUB_TOKEN=$GITHUB_TOKEN \
-            -DAZURE_DEVOPS_ARTIFACT_USERNAME=$AZURE_DEVOPS_ARTIFACT_USERNAME \
-            -DAZURE_DEVOPS_ARTIFACT_TOKEN=$AZURE_DEVOPS_ARTIFACT_TOKEN
+            -DGITHUB_ACTOR=${{ github.actor }}
+
+      - name: Published artifact coordinates
+        env:
+          ARTEFACT_VERSION: ${{ needs.Artefact-Version.outputs.artefact_version }}
+        run: |
+          printf 'Published Maven artifact: `uk.gov.hmcts.cp:api-cp-audit-reports:%s`\n\n' "$ARTEFACT_VERSION" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Repositories: Azure Artifacts (hmcts-lib) and GitHub Packages. This contract project does not publish a container to ACR.\n' >> "$GITHUB_STEP_SUMMARY"
